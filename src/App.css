@@ -1,38 +1,230 @@
+:root {
+  --transparent: #ffffff00;
+  --black: black;
+  --light_black: rgba(18, 13, 20, 0.5);
+  --white: white;
+  --red: rgb(143, 6, 6);
+  --violet: rgb(130, 7, 201);
+  --light_violet:#8207c950;
+  --grey: grey;
+  --light_grey: rgba(0, 0, 0, 0.247);
+  --green: rgb(6, 99, 6);
+  --gold: rgba(192, 165, 13, 0.596);
+
+  --font_libre: "David Libre";
+  --font_eater: "Eater";
+  --font_alegreya: "Alegreya Sans Italic";
+}
+
+.public-DraftStyleDefault-block {
+  color: white;
+  font-family: monospace;
+  font-size: 0.88rem;
+  font-weight: 400;
+}
+
 .App {
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--light_violet); 
+  
+  margin: 0 0 ;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.header {
+  display: flex;
+  width: 80%;
+  margin: 0 auto;
+  height: 5vh;
+  justify-content: space-between;
+  align-items: center;
 }
+.header-search{
+  text-align: end;
+  min-width: 50%;
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.todo-form {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+  align-items: center;  
+  width: 100%;
+  height: 15vh;  
+}
+
+#add-todo,
+.save-button,
+.delete-button,
+.hashtag-edit {  
+  padding: 0.1rem 0.2rem; 
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.7rem;
+  color: black;
+}
+#add-todo:hover,
+.save-button:hover,
+.delete-button:hover,
+.hashtag-edit:hover {
+  transition: all 0.3s;
+  box-shadow: inset 0 0 1rem var(--violet);
+}
+#add-todo:active,
+.save-button:active,
+.delete-button:active,
+.hashtag-edit:active {
+  transition: all 0.3s;
+  scale: 0.95;
+}
+
+.input-wrapper {
+  display: flex;
+  width: 80%; 
+}
+.label-title,
+.label-description {
+flex: 0 0 20%;
+margin-right: 5%;
+text-align: start;
+font-size: 1.2rem;
+}
+
+#input-title,
+#input-description,
+#input-search {
+  flex: 0 0 75%;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1.5rem  1.5rem 0 1.5rem;
+}
+#input-search {
+  width:  75%;
+}
+
+#input-description {
+  height: 2.5rem;
+}
+
+.todo-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 2vh auto;
+  width: 90%;
+  height: 76vh;
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.message-empty {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: 2rem;
+}
+.todo-item {
+  position: relative;
+  width: 19rem;
+  height: 11rem;
+  padding: 2rem 0.3rem 3rem 0.3rem;
+  margin: 0.5rem;
+  border: 3px solid transparent;
+  border-radius: 1.5rem  1.5rem 0 1.5rem;
+  background: 
+    linear-gradient(var(--grey) 0 0) padding-box,
+    linear-gradient(to right, var(--light_black), var(--light_violet)) border-box;
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;  
+  transition: all 0.7s;
+}
+.todo-item.__activated {
+  background: 
+    linear-gradient(var(--light_violet) 0 0) padding-box,
+    linear-gradient(to right, var(--light_black), var(--light_violet)) border-box; 
+  transition: all 0.7s;
+}
+.todo-list::-webkit-scrollbar,
+.todo-item::-webkit-scrollbar {
+  display: none;
 }
 
-.App-link {
-  color: #61dafb;
+.todo-title,
+.todo-description {
+  width: 100%;
+  padding: 0;
+  background-color: var(--transparent);
+  color: var(--black);
+  border: solid 1px var(--transparent);
+  cursor: pointer;
+  transition: all 0.7s;
+}
+.todo-title {
+  width: 80%;
+  position: absolute;
+  top: 0.2em;
+  left: calc(50% - 40%);
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;  
+  
+}
+.todo-title::before {
+  content: '';
+  position: absolute;
+  bottom: 0.5rem;
+  height: 2px;
+  width: 80%;
+  background-color: var(--black);
+  z-index: 10;
+}
+.todo-description {
+  width: 19em;  
+  height: 6em;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.hashtag {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 0.2rem;
+  bottom: 0.3rem;
+  left: 5%;
+  width: 90%;  
+  height: 1rem;
+  color: var(--black);
+  border:  solid 1px var(--transparent);
 }
+.hashtag-title{
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.hashtag-list {
+  background-color: var(--transparent);
+  width: 60%;
+  border: solid 3px var(--transparent);
+  border-radius: 0.5rem;
+  padding: 0 0.2rem;
+  color:var(--white);  
+}
+.hashtag-list:disabled {
+  color: var(--black);
+}
+
+.hashtag-list:focus {
+  color: var(--black);
+  border-color: var(--green);
+}
+
+.todo-controls {
+  position: absolute;
+  display: flex;
+  left: 5%;
+  justify-content: space-between;
+  width: 90%;
+  
+  bottom: 1.6rem;
+}
+
