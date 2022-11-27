@@ -1,24 +1,25 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import MyButton from "../UI/MyButton/MyButton";
-import { useSelector, useDispatch } from "react-redux";
-import { setCurrentTodo, setEditItem, setDeleteItem, setItemTag } from "../../redux/todo";
-
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { setCurrentTodo, setEditItem, setDeleteItem } from "../../redux/todoSlice";
 import { HighlightWithinTextarea } from 'react-highlight-within-textarea'
-//import Highlight from "../../api/Highlight";
+import { TodoItem }  from "../../api/interface"
 
-const ToDoItem = ({props}) => {
-  const dispatch = useDispatch();
-  const {currentTodo} = useSelector(state => state.todo)
-  const defaultState = {...props}  
+interface TodoItemProps {
+  props: TodoItem
+}
+
+const ToDoItem: React.FC<TodoItemProps>  = ({props}) => {
+  const dispatch = useAppDispatch();
+  const {currentTodo} = useAppSelector(state => state.todo)
+  const defaultState = props 
   const [item, setItem] = useState(defaultState)
   const [itemTags, setItemTags] = useState(item.hashtag) 
-  //const [regex, setRegex] = useState("")
   const [editDescription, setEditDescription] = useState(true)
   const [editTag, setEditTag] = useState(true)
 
   useEffect(()=> {
-    if (currentTodo === props.id) {
-      console.log(`Clicled `, props.id)
+    if (currentTodo === props.id) {      
     } else {
       setItem(defaultState)
       setEditDescription(true)
@@ -27,15 +28,11 @@ const ToDoItem = ({props}) => {
   }, [currentTodo])
 
   useEffect(()=> {
-    setItem({...item, hashtag:itemTags})
+    setItem({...item, hashtag:itemTags})    
+    dispatch(setEditItem(item))
   }, [itemTags])
 
-  // const light = useCallback((str) => {
-  //   return <Highlight filter={regex} str={str}></Highlight>
-  // }, [regex])
- 
-
-  const handleItemChoose = ()=> {  
+  const handleItemChoose = () => {  
     dispatch(setCurrentTodo(props.id))
   }
   const handleMouseEnter = ()=> {
@@ -46,11 +43,11 @@ const ToDoItem = ({props}) => {
   }
   const handleMouseLeave = ()=> {  
     if (editDescription && editTag) {
-      dispatch(setCurrentTodo(null))
+      dispatch(setCurrentTodo(-100))
     }
   }
 
-  const handleTitleChange = event => {  
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {  
     setItem(prev => {
       return {
         ...prev, title: event.target.value
@@ -58,14 +55,14 @@ const ToDoItem = ({props}) => {
     })
   }
 
-  const handleDescriptionChange = e => {
-    console.log('handleDescriptionChange = e', e)
-    setItem({...item, description: e})
+  const handleDescriptionChange = (event: string) => {    
+    setItem({...item, description: event})
   }
 
-  const handleHashtagChange = event => {
+  const handleHashtagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setItemTags(event.target.value)
-    setItem({...item, hashtag: itemTags})  
+    setItem({...item, hashtag: itemTags}) 
+    dispatch(setEditItem(item)) 
   }
 
   function getHashtags() {    
@@ -77,27 +74,28 @@ const ToDoItem = ({props}) => {
     dispatch(setEditItem(item))
   }
 
-  const handleSaveItem = (event) => {   
+  const handleSaveItem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {   
     if (editDescription === false)   {
       getHashtags()      
     }
     setEditDescription(prev => !prev)
+    dispatch(setEditItem(item))
   }  
 
-  function handleSaveHashtagChange(event) {
+  function handleSaveHashtagChange(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     if (editTag === false) {
       dispatch(setEditItem(item))      
     }
     setEditTag(prev => !prev)
   }
 
-  const handleDeleteItem = () => {
+  const handleDeleteItem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     dispatch(setDeleteItem(item))
   }
 
   return(
     <article 
-      className={currentTodo === props.id? "todo-item public-DraftStyleDefault-block __activated":'todo-item public-DraftStyleDefault-block'} 
+      className={currentTodo === props.id? "todo-item public-DraftStyleDefault-block __activated": 'todo-item public-DraftStyleDefault-block'} 
       onClick={handleItemChoose}
       onMouseEnter = {handleMouseEnter}
       onMouseLeave = {handleMouseLeave}
@@ -109,8 +107,7 @@ const ToDoItem = ({props}) => {
         onChange={handleTitleChange}
       />
       {!editDescription
-      ? <HighlightWithinTextarea 
-      className="todo-description public-DraftStyleDefault-block" 
+      ? <HighlightWithinTextarea        
       data-description={'description' + props.id}
       highlight={/#\w+/mg}
       value={item.description}      
@@ -121,7 +118,7 @@ const ToDoItem = ({props}) => {
       data-description={'description' + props.id}      
       value={item.description}
       disabled={true}
-      onChange={handleDescriptionChange}
+      //onChange={handleDescriptionChange}
     />
       }
       <div className="hashtag">
@@ -134,21 +131,27 @@ const ToDoItem = ({props}) => {
           onInput={handleHashtagChange}
         />
         <MyButton 
+          id={'edit-tag' + props.id}
           className="hashtag-edit public-DraftStyleDefault-block"
           data-edit={'edit' + props.id}
-          onClick={handleSaveHashtagChange}        
+          getSubmit={handleSaveHashtagChange}        
         >{editTag? 'Edit tag': 'Save tag'}</MyButton>
       </div>
       
       <div className="todo-controls">
-        <MyButton 
+        <MyButton
+          id={'edit-description' + props.id}
           className="save-button public-DraftStyleDefault-block" 
-          onClick={handleSaveItem}
+          getSubmit={handleSaveItem}
           data-save={'save' + props.id}
         >
           {editDescription? 'Edit todo': 'Save todo'}
         </MyButton>
-        <MyButton className="delete-button" onClick={handleDeleteItem}>
+        <MyButton
+          id={'delete-description' + props.id}
+          className="delete-button" 
+          getSubmit={handleDeleteItem}
+        >
           Delete todo
         </MyButton>
       </div>      

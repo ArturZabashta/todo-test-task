@@ -1,24 +1,25 @@
 import React, { useState} from 'react';
-import ToDoInput from '../ToDoInput/ToDoInput';
+import MyInput from '../MyInput/MyInput';
 import MyButton from '../MyButton/MyButton';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCreateItem } from '../../../redux/todo';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { setCreateItem } from '../../../redux/todoSlice';
 
 const ToDoForm = () => {
-  const dispatch = useDispatch();
-  const {todoItemList} = useSelector(state => state.todo)
+  const dispatch = useAppDispatch();
+  const {todoItemList} = useAppSelector(state => state.todo)
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  
+  const handleTitleChange = (value: string) => {
+    setTitle(value)
+  }
 
-  //const [item, setItem] = useState([])
-  const handleTitleChange = e => {
-    setTitle(e.target.value)
+  const handleDescriptionChange = (value: string) => {
+    setDescription(value)
   }
-  const handleDescriptionChange = e => {
-    setDescription(e.target.value)
-  }
-  const handleSubmit = (event) => {
+
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {    
     event.preventDefault()
     let id;
     if (todoItemList.length > 0) {
@@ -38,35 +39,36 @@ const ToDoForm = () => {
     setTitle('')
     setDescription('')
   }
-
  
   return( 
     <form className='todo-form'>
       <div className='input-wrapper'>
         <label className='label-title' >ToDo title:</label>
-        <ToDoInput 
+        <MyInput 
           value={title} 
           id="input-title" 
           type="text"
           placeholder="Add ToDo title"
-          onChange={handleTitleChange}
+          getChange={handleTitleChange}
         />
       </div>
       <div className='input-wrapper'>
         <label className='label-description' >ToDo description:</label>
-        <ToDoInput 
+        <MyInput 
           value={description} 
           id="input-description" 
           type="textarea"
           placeholder="Add ToDo description"
-          onChange={handleDescriptionChange}
+          getChange={handleDescriptionChange}
         />
       </div>
       
       <MyButton 
+        children='Add ToDo'
+        className=''
         id="add-todo" 
-        onClick={handleSubmit}
-      >Add ToDo</MyButton>
+        getSubmit={handleSubmit}
+      ></MyButton>
     </form>   
     
   );
