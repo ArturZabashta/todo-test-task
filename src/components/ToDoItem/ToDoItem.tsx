@@ -25,12 +25,12 @@ const ToDoItem: React.FC<TodoItemProps>  = ({props}) => {
       setEditDescription(true)
       setEditTag(true)
     }
-  }, [currentTodo])
+  }, [currentTodo, props.id, defaultState])
 
-  useEffect(()=> {
-    setItem({...item, hashtag:itemTags})    
-    dispatch(setEditItem(item))
-  }, [itemTags])
+  // useEffect(()=> {
+  //   setItem({...item, hashtag:itemTags})    
+  //   //dispatch(setEditItem(item))
+  // }, [item, itemTags])
 
   const handleItemChoose = () => {  
     dispatch(setCurrentTodo(props.id))
@@ -71,6 +71,13 @@ const ToDoItem: React.FC<TodoItemProps>  = ({props}) => {
   
     setItemTags(hashtagsStr)
     setItem({...item, hashtag: hashtagsStr})
+    setItem({...item, hashtag: hashtagsStr})
+    dispatch(setEditItem(item))
+    rerender()
+        
+  }
+
+  function rerender() {
     dispatch(setEditItem(item))
   }
 
@@ -79,7 +86,7 @@ const ToDoItem: React.FC<TodoItemProps>  = ({props}) => {
       getHashtags()      
     }
     setEditDescription(prev => !prev)
-    dispatch(setEditItem(item))
+    //dispatch(setEditItem(item))
   }  
 
   function handleSaveHashtagChange(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
